@@ -1,0 +1,14 @@
+{
+  "capturedAt": "2026-10-04",
+  "capturedFrom": "devnet simulateTransaction (sigVerify off, replaceRecentBlockhash, nothing signed or sent): TX1 + CreateAssociatedToken(vault authority, QLC mint, Token-2022) in one transaction",
+  "genesis": "EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG",
+  "owner": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+  "length": 179,
+  "extensionOrder": [
+    7,
+    27,
+    15
+  ],
+  "note": "Simulated vault before initialize thaws it: state byte 108 = 2 (Frozen); initialize only changes it to 1. TLV area unchanged.",
+  "accountHex": "5c0d817374311b33249a4a59f597a17829714a577ef99b27c00c50de68fdafd7cdc8b704b1b45913fe3b4c9efb45bbc452ae9b0b393fb994ec8e3fdad3864102000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002070000001b0000000f00010000"
+}

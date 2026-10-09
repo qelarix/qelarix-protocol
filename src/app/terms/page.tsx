@@ -1,0 +1,198 @@
+import { Metadata } from "next";
+import Link from "next/link";
+import QelarixBackdrop from "@/components/ui/QelarixBackdrop";
+
+export const metadata: Metadata = {
+  title: "Terms of Service — Qelarix",
+  description: "Terms of Service for the Qelarix platform.",
+};
+
+function Section({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
+  return (
+    <section id={id} className="mb-10">
+      <h2 className="text-xl font-semibold text-white mb-4">{title}</h2>
+      <div className="text-white/65 text-sm leading-7 space-y-3">{children}</div>
+    </section>
+  );
+}
+
+export default function TermsPage() {
+  return (
+    <div className="min-h-screen">
+      <QelarixBackdrop layer="behind" />
+      <div
+        className="border-b"
+        style={{ borderColor: "rgba(255,255,255,0.06)" }}
+      >
+        <div className="max-w-3xl mx-auto px-6 py-5 flex items-center justify-between">
+          <Link
+            href="/"
+            className="text-white/60 hover:text-white text-sm transition-colors flex items-center gap-2"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+            Back
+          </Link>
+          <span className="text-white/30 text-xs">Last updated: October 2026</span>
+        </div>
+      </div>
+
+      <div className="max-w-3xl mx-auto px-6 py-12">
+        <div className="mb-10">
+          <h1 className="text-3xl font-bold text-white mb-2">Terms of Service</h1>
+          <p className="text-white/40 text-sm">
+            Please read these terms carefully before using the Qelarix service.
+          </p>
+        </div>
+
+        <Section id="acceptance" title="1. Acceptance of terms">
+          <p>
+            By using the Qelarix service (hereinafter: &ldquo;Platform&rdquo;) you accept these Terms of Service.
+            If you do not agree, please stop using the Platform. The terms take effect on the date of account registration.
+          </p>
+        </Section>
+
+        <Section id="service" title="2. Description of service">
+          <p>
+            Qelarix is a SaaS tool that enables the generation of image, video and audio content
+            using various third-party AI models (Flux, Runway, Kling, Stable Diffusion, etc.)
+            through a credit system.
+          </p>
+          <p>
+            The service is provided &ldquo;as-is&rdquo;. We do not guarantee 100% availability — our target is
+            99.5% uptime. Scheduled maintenance is announced 48h in advance.
+          </p>
+        </Section>
+
+        <Section id="account" title="3. User account">
+          <ul className="space-y-2 list-disc list-inside">
+            <li>You must be at least 18 years old to use the Platform.</li>
+            <li>One account per person — sharing accounts is prohibited.</li>
+            <li>You are responsible for the security of your wallet (including its private key and seed phrase) and all activities on the account.</li>
+            <li>You can delete your account in Settings → Delete account (GDPR right to erasure).</li>
+          </ul>
+        </Section>
+
+        <Section id="credits" title="4. QLC and payment">
+          <p>
+            Generations on Qelarix are paid in QLC, an on-chain credit token on Solana held in your own wallet.
+            <strong className="text-white"> QLC is charged only when a generation succeeds; failed generations are refunded automatically.</strong>
+          </p>
+          <ul className="space-y-2 list-disc list-inside mt-2">
+            <li>During the current beta, Qelarix runs on the Solana devnet. Devnet QLC and devnet tokens have no monetary value, and no payments with real money are processed.</li>
+            <li>You approve a QLC spending limit in your wallet and can change or revoke it at any time.</li>
+            <li>The QLC cost of each generation is shown before you generate.</li>
+            <li>QLC is a usage credit for Qelarix services. It is not an investment, cannot be exchanged for money through Qelarix and can only be transferred between Qelarix members.</li>
+            <li>Terms for paid QLC on Solana mainnet will be published before mainnet launch.</li>
+          </ul>
+        </Section>
+
+        <Section id="content-ownership" title="5. Content ownership">
+          <p>
+            <strong className="text-white">Your content, your ownership.</strong> All content
+            you generate through the Platform (images, videos, audio) is yours for commercial
+            and personal use — without royalty fees to us.
+          </p>
+          <p>
+            You grant us a limited, non-exclusive license to store and deliver generated content
+            for the purpose of providing the service. This license ends upon deletion of the content or account.
+          </p>
+          <p className="text-yellow-400/80">
+            Note: Rights to content generated by third-party AI models (Flux, Runway, etc.) are governed
+            by those providers&apos; terms. We recommend checking their licenses for commercial use.
+          </p>
+        </Section>
+
+        <Section id="prohibited" title="6. Prohibited use">
+          <p>It is prohibited to use the Platform for:</p>
+          <ul className="space-y-1 list-disc list-inside">
+            <li>Generating deepfake content depicting real people without their consent</li>
+            <li>Content depicting minors in a sexual manner (CSAM)</li>
+            <li>Generating disinformation, propaganda or fake news</li>
+            <li>Infringement of copyright, trademarks or intellectual property rights</li>
+            <li>Harassment, threats or hate towards individuals or groups</li>
+            <li>Automated mass generation of spam content</li>
+            <li>Attempts to circumvent security measures or the credit system</li>
+            <li>Sharing access credentials with third parties</li>
+          </ul>
+          <p className="mt-3 text-red-400/80">
+            Violation of these rules results in immediate account termination without credit refund.
+          </p>
+        </Section>
+
+        <Section id="moderation" title="7. Content moderation">
+          <p>
+            We use automated safety filters at the AI model level (NSFW detectors, content policy of AI providers).
+            We may manually review content in cases of reported violations. We reserve the right
+            to remove content that violates these terms.
+          </p>
+        </Section>
+
+        <Section id="api" title="8. API access (Pro and Agency plans)">
+          <p>
+            Pro and Agency plan users may use our API. The API is intended for legitimate
+            integration into your own applications — reselling API access to third parties is prohibited.
+            Rate limits are specified in the API documentation.
+          </p>
+        </Section>
+
+        <Section id="liability" title="9. Limitation of liability">
+          <p>
+            Our total liability to you is limited to the amount you paid in the last
+            12 months. We are not liable for indirect damages, lost profits or data.
+          </p>
+          <p>
+            We are not responsible for content generated by third-party AI models, nor for the availability
+            of those models (fal.ai, Runway, Anthropic, etc.).
+          </p>
+        </Section>
+
+        <Section id="termination" title="10. Termination">
+          <p>
+            You may cancel your subscription at any time in Settings — access continues until the end
+            of the paid period. In case of violation of these terms, we may immediately terminate your account.
+          </p>
+        </Section>
+
+        <Section id="governing-law" title="11. Governing law">
+          <p>
+            These Terms are governed by the law of the Federal Republic of Germany, excluding conflict-of-law rules.
+            The competent court is Berlin, Germany. Consumers in the EU retain rights under local law.
+          </p>
+        </Section>
+
+        <Section id="changes" title="12. Changes to terms">
+          <p>
+            We will notify you of material changes by email at least 30 days in advance.
+            Continued use of the Platform constitutes acceptance of the new terms.
+          </p>
+        </Section>
+
+        <Section id="contact" title="13. Contact">
+          <p>
+            For questions about these terms:{" "}
+            <a href="mailto:contact@pixidigital.io" className="text-purple-400 hover:text-purple-300">
+              contact@pixidigital.io
+            </a>
+          </p>
+        </Section>
+
+        <div
+          className="mt-10 pt-6 flex flex-wrap gap-4 text-xs"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+        >
+          <Link href="/impressum" className="text-white/40 hover:text-white/70 transition-colors">
+            Impressum
+          </Link>
+          <Link href="/privacy" className="text-white/40 hover:text-white/70 transition-colors">
+            Privacy Policy
+          </Link>
+          <Link href="/cookie-policy" className="text-white/40 hover:text-white/70 transition-colors">
+            Cookie Policy
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}

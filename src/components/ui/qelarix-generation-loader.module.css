@@ -1,0 +1,86 @@
+/* Qelarix branded generation loader — premium logo-centered ring + glow, CSS-only.
+   Mode tints via --ql-a / --ql-b. Respects prefers-reduced-motion. Works on dark bg. */
+
+.loader {
+  --ql-a: #7B61FF;
+  --ql-b: #3BE7FF;
+  --ql-disc: 72px;
+  --ql-logo: 46px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 14px; text-align: center; color: rgba(255,255,255,0.7);
+  font-family: -apple-system, 'SF Pro Text', 'Inter', system-ui, sans-serif;
+}
+.loader.compact { flex-direction: row; gap: 10px; }
+
+/* mode tints */
+.image  { --ql-a: #9478FF; --ql-b: #7B61FF; }
+.video  { --ql-a: #3BE7FF; --ql-b: #6B8BFF; }
+.audio  { --ql-a: #3BE7FF; --ql-b: #A892FF; }
+.export { --ql-a: #FBBF24; --ql-b: #7B61FF; }
+
+/* sizes */
+.sm { --ql-disc: 54px; --ql-logo: 42px; }
+.md { --ql-disc: 84px; --ql-logo: 64px; }
+.lg { --ql-disc: 124px; --ql-logo: 96px; }
+
+.disc { position: relative; width: var(--ql-disc); height: var(--ql-disc); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+
+.glow {
+  position: absolute; inset: -38%; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, var(--ql-a) 0%, transparent 62%);
+  opacity: 0.55; filter: blur(10px); animation: qlPulse 2.4s ease-in-out infinite;
+}
+@keyframes qlPulse { 0%,100% { opacity: 0.55; transform: scale(0.96); } 50% { opacity: 1; transform: scale(1.06); } }
+
+.ring {
+  position: absolute; inset: -6px; border-radius: 50%; pointer-events: none;
+  background: conic-gradient(from 0deg, transparent 0%, var(--ql-a) 30%, var(--ql-b) 58%, transparent 78%);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4.5px), #000 calc(100% - 4px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 4.5px), #000 calc(100% - 4px));
+  animation: qlSpin 1.15s linear infinite;
+}
+.ring2 {
+  position: absolute; inset: -1px; border-radius: 50%; pointer-events: none;
+  border: 1px solid rgba(255,255,255,0.12);
+  animation: qlPulse 2.8s ease-in-out infinite;
+}
+@keyframes qlSpin { to { transform: rotate(360deg); } }
+
+.logoWrap {
+  position: relative; z-index: 1;
+  width: var(--ql-logo); height: var(--ql-logo);
+  display: flex; align-items: center; justify-content: center;
+  animation: qlBreathe 2.8s ease-in-out infinite;
+}
+.logoImg { width: 100%; height: 100%; object-fit: contain; display: block; transform: scale(1.08); filter: drop-shadow(0 2px 8px rgba(0,0,0,0.45)); }
+@keyframes qlBreathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+
+/* inline fallback mark (used if the logo image fails to load) */
+.markFallback {
+  width: 100%; height: 100%; border-radius: 30%;
+  background: linear-gradient(140deg, #A892FF 0%, #7B61FF 55%, #3BE7FF 100%);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 800; letter-spacing: -0.5px;
+  font-size: calc(var(--ql-logo) * 0.5);
+  box-shadow: 0 0 14px rgba(123,97,255,0.45);
+}
+
+/* audio equalizer bars */
+.bars { display: flex; align-items: flex-end; justify-content: center; gap: 3px; height: 18px; margin-top: -2px; }
+.bar { width: 3px; border-radius: 2px; background: linear-gradient(to top, var(--ql-a), var(--ql-b)); transform-origin: bottom; animation: qlBar 1.1s ease-in-out infinite; }
+@keyframes qlBar { 0%,100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+
+.text { display: flex; flex-direction: column; gap: 3px; align-items: center; }
+.loader.compact .text { align-items: flex-start; }
+.label { font-size: 12.5px; font-weight: 500; color: rgba(255,255,255,0.82); letter-spacing: -0.1px; }
+.sm .label { font-size: 11.5px; }
+.lg .label { font-size: 14px; }
+.sublabel { font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: -0.1px; }
+
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .glow, .ring, .ring2, .logoWrap, .bar { animation: none !important; }
+  .ring { opacity: 0.8; }
+  .glow { opacity: 0.6; }
+}

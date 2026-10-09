@@ -1,0 +1,472 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+  --purple: #7B61FF;
+  --blue: #3BE7FF;
+  --bg-primary: #000000;
+  --bg-secondary: #111318;
+  --bg-card: #111318;
+  --border: #2A2F3A;
+  --text-primary: #F4F7FB;
+  --text-secondary: #AAB2BF;
+  --text-muted: #6B7280;
+  --accent: #7B61FF;
+  --accent-hover: #3BE7FF;
+  --silver: #C7CDD6;
+  --gradient-hero: linear-gradient(135deg, #7B61FF 0%, #3BE7FF 100%);
+  --gradient-dark: linear-gradient(180deg, #000000 0%, #1A1D24 100%);
+  --gradient-neural: linear-gradient(135deg, #112B45 0%, #7B61FF 100%);
+  --glow-violet: 0 0 20px rgba(123, 97, 255, 0.3);
+  --glow-cyan: 0 0 20px rgba(59, 231, 255, 0.2);
+}
+
+body {
+  background-color: #000000;
+  color: #F4F7FB;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-dark {
+    background: rgba(17, 43, 69, 0.35);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(42, 47, 58, 0.7);
+  }
+
+  .glow-purple {
+    box-shadow: 0 0 30px rgba(123, 97, 255, 0.3);
+  }
+
+  .glow-blue {
+    box-shadow: 0 0 30px rgba(59, 231, 255, 0.3);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, #7B61FF, #3BE7FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #F59E0B, #EF4444, #F59E0B);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s infinite;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ripple {
+  from { transform: scale(0); opacity: 1; }
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* Infinite marquee scroll */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Pulse ring for generate buttons */
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(123, 97, 255, 0.6); }
+  70% { box-shadow: 0 0 0 12px rgba(123, 97, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(123, 97, 255, 0); }
+}
+
+/* Animated gradient for progress bars */
+@keyframes progress-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Skeleton shimmer */
+@keyframes skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@layer utilities {
+  .animate-marquee {
+    animation: marquee var(--marquee-duration, 30s) linear infinite;
+  }
+
+  .animate-pulse-ring {
+    animation: pulse-ring 1.5s ease-out infinite;
+  }
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      #111318 25%,
+      #1a1f2a 50%,
+      #111318 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.8s ease-in-out infinite;
+    border-radius: 8px;
+  }
+
+  .animate-progress-gradient {
+    background: linear-gradient(90deg, #7B61FF, #3BE7FF, #7B61FF);
+    background-size: 200% 100%;
+    animation: progress-gradient 2s ease infinite;
+  }
+}
+
+.btn-primary {
+  background: #7B61FF;
+  color: #F4F7FB;
+  transition: all 0.3s ease;
+}
+.btn-primary:hover {
+  background: #3BE7FF;
+  color: #000000;
+  box-shadow: 0 0 20px rgba(59, 231, 255, 0.4);
+}
+.card-qelarix {
+  background: #111318;
+  border: 1px solid #2A2F3A;
+  border-radius: 12px;
+}
+.card-qelarix:hover {
+  border-color: #7B61FF;
+  box-shadow: 0 0 20px rgba(123, 97, 255, 0.2);
+}
+.text-gradient {
+  background: linear-gradient(135deg, #7B61FF 0%, #3BE7FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.glow-violet {
+  box-shadow: 0 0 20px rgba(123, 97, 255, 0.25),
+              0 0 40px rgba(123, 97, 255, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+.glow-violet:hover {
+  box-shadow: 0 0 28px rgba(123, 97, 255, 0.4),
+              0 0 60px rgba(123, 97, 255, 0.15);
+}
+.glow-cyan {
+  box-shadow: 0 0 16px rgba(59, 231, 255, 0.2),
+              0 0 32px rgba(59, 231, 255, 0.08);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes studioZoomIn { from { opacity: 0; transform: scale(0.88); } to { opacity: 1; transform: scale(1); } }
+@keyframes studioOverlayIn { from { opacity: 0; } to { opacity: 1; } }
+.ref-tooltip { opacity: 0; transition: opacity 0.15s; }
+div:hover .ref-tooltip { opacity: 1 !important; }
+@keyframes shimmerSlide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+@keyframes spinAnim { to { transform: rotate(360deg); } }
+
+/* ─── Card hover lift ──────────────────────────────────────────────────────── */
+.card-hover {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(123, 97, 255, 0.15),
+              0 2px 8px rgba(0, 0, 0, 0.4);
+  border-color: rgba(123, 97, 255, 0.3) !important;
+}
+
+/* ─── Holographic border ───────────────────────────────────────────────────── */
+.holo-border {
+  position: relative;
+  border: 1px solid transparent !important;
+  background-clip: padding-box;
+}
+.holo-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(123, 97, 255, 0.6) 0%,
+    rgba(59, 231, 255, 0.4) 30%,
+    rgba(123, 97, 255, 0.1) 60%,
+    rgba(59, 231, 255, 0.6) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.holo-border:hover::before {
+  opacity: 1;
+}
+
+/* ─── Holographic text ─────────────────────────────────────────────────────── */
+.holo-text {
+  background: linear-gradient(
+    90deg,
+    #7B61FF 0%,
+    #3BE7FF 30%,
+    #C7CDD6 50%,
+    #3BE7FF 70%,
+    #7B61FF 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: holoText 4s linear infinite;
+}
+@keyframes holoText {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* ─── Smooth global transitions ────────────────────────────────────────────── */
+*, *::before, *::after {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+button, a, [role="button"] {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Page enter animation ─────────────────────────────────────────────────── */
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter {
+  animation: pageFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ─── Premium spinner ──────────────────────────────────────────────────────── */
+@keyframes premiumSpin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.spinner-premium {
+  width: 36px;
+  height: 36px;
+  border: 2.5px solid rgba(123, 97, 255, 0.15);
+  border-top-color: #7B61FF;
+  border-right-color: #3BE7FF;
+  border-radius: 50%;
+  animation: premiumSpin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* ─── Pulse glow ───────────────────────────────────────────────────────────── */
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(123, 97, 255, 0.4); }
+  50%       { box-shadow: 0 0 0 6px rgba(123, 97, 255, 0); }
+}
+.pulse-glow {
+  animation: pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ─── Fade up stagger ──────────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.fade-up-delay-1 { animation: fadeUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.1s forwards; opacity: 0; }
+.fade-up-delay-2 { animation: fadeUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards; opacity: 0; }
+.fade-up-delay-3 { animation: fadeUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards; opacity: 0; }
+
+/* ============================================
+   QELARIX — GLOBAL UI POLISH
+   ============================================ */
+
+/* ── ROUNDING — larger radii, premium feel ── */
+button {
+  border-radius: 10px !important;
+}
+input, textarea, select {
+  border-radius: 10px !important;
+}
+[class*="modal"], [class*="card"], [class*="panel"] {
+  border-radius: 14px !important;
+}
+
+/* ── BUTTON GLOW ── */
+button[style*="7B61FF"],
+button[style*="background: #7B61FF"],
+button[style*="background:#7B61FF"] {
+  box-shadow: 0 0 16px rgba(123,97,255,0.35),
+              0 2px 8px rgba(0,0,0,0.3) !important;
+  transition: box-shadow 0.25s ease, transform 0.2s ease !important;
+}
+button[style*="7B61FF"]:hover {
+  box-shadow: 0 0 28px rgba(123,97,255,0.55),
+              0 4px 16px rgba(0,0,0,0.4) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ── GLOW ON ALL PRIMARY BUTTONS ── */
+button:not([disabled]):hover {
+  filter: brightness(1.08);
+  transition: filter 0.2s ease, transform 0.2s ease !important;
+}
+button:not([disabled]):active {
+  transform: scale(0.97) !important;
+}
+
+/* ── SMOOTH TRANSITIONS GLOBALNO ── */
+button, a, input, textarea, select,
+[role="button"], [role="tab"],
+div[onClick], div[onclick] {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* ── CARD HOVER GLOW ── */
+div[style*="border: 1px solid #2A2F3A"]:hover,
+div[style*="border:1px solid #2A2F3A"]:hover {
+  border-color: rgba(123,97,255,0.35) !important;
+  box-shadow: 0 4px 24px rgba(123,97,255,0.08),
+              0 1px 4px rgba(0,0,0,0.3) !important;
+  transition: all 0.25s ease !important;
+}
+
+/* ── HOLOGRAPHIC BORDER ON HOVER — for cards ── */
+@keyframes holoBorderRotate {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ── INPUT FOCUS GLOW ── */
+input:focus, textarea:focus, select:focus {
+  outline: none !important;
+  border-color: rgba(123,97,255,0.6) !important;
+  box-shadow: 0 0 0 3px rgba(123,97,255,0.12),
+              0 0 12px rgba(123,97,255,0.15) !important;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+/* ── PREMIUM SCROLLBAR ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0D0D12;
+}
+::-webkit-scrollbar-thumb {
+  background: #2A2F3A;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #7B61FF;
+}
+
+/* ── SMOOTH PAGE TRANSITIONS ── */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── SKELETON SHIMMER (globalni) ── */
+@keyframes skeletonShimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.skeleton-global {
+  background: linear-gradient(
+    90deg,
+    #111318 25%,
+    #1A1F2A 50%,
+    #111318 75%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.8s ease-in-out infinite;
+}
+
+/* ── PREMIUM SPINNER (globalni) ── */
+@keyframes premiumSpin {
+  to { transform: rotate(360deg); }
+}
+.spinner {
+  border: 2.5px solid rgba(123,97,255,0.15) !important;
+  border-top-color: #7B61FF !important;
+  border-right-color: #3BE7FF !important;
+  border-radius: 50% !important;
+  animation: premiumSpin 0.85s cubic-bezier(0.4,0,0.2,1) infinite !important;
+}
+
+/* ── FADE UP ANIMACIJA ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── PULSE GLOW (za live/active elemente) ── */
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(123,97,255,0.35); }
+  50%       { box-shadow: 0 0 0 8px rgba(123,97,255,0); }
+}
+
+/* ── SELECTION BOJA ── */
+::selection {
+  background: rgba(123,97,255,0.3);
+  color: #F4F7FB;
+}
+
+/* ── LINK HOVER ── */
+a:hover {
+  color: #7B61FF !important;
+  transition: color 0.15s ease !important;
+}

@@ -1,0 +1,32 @@
+# Owner-run Ledger signer for the QLC program's one-time `initialize` (TX2) on devnet.
+# Standalone workspace: never part of the `solana/` program workspace, so the program build is unaffected.
+# Every Solana dependency is pinned to the version in the Agave v4.1.2 release's own Cargo.lock; the Ledger
+# path is the official `solana-remote-wallet` 4.1.2 with the same features as the Agave `solana` CLI.
+[package]
+name = "qlc-tx2-signer"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[dependencies]
+solana-remote-wallet = { version = "=4.1.2", default-features = false, features = ["agave-unstable-api", "linux-static-hidraw"] }
+solana-clap-utils = { version = "=4.1.2", features = ["agave-unstable-api"] }
+clap = { version = "=2.33.3", default-features = false }
+solana-rpc-client = { version = "=4.1.2", default-features = false }
+solana-rpc-client-api = "=4.1.2"
+solana-commitment-config = "=3.1.1"
+solana-message = "=4.1.1"
+solana-transaction = { version = "=4.1.1", features = ["verify"] }
+solana-instruction = "=3.4.0"
+solana-pubkey = { version = "=4.2.0", features = ["curve25519"] }
+solana-hash = "=4.3.0"
+solana-signature = { version = "=3.4.0", features = ["verify"] }
+solana-signer = "=3.0.0"
+solana-sha256-hasher = "=3.1.0"
+base64 = "=0.22.1"
+
+[dev-dependencies]
+serde_json = "=1.0.149"
+solana-keypair = "=3.1.2"

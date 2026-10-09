@@ -1,0 +1,34 @@
+{
+  "programId": "EtqwjEQT2ZuEwFZ9RXoPgDbupn7eH8iLyV3cR2ENrwNa",
+  "deployedBinary": {
+    "sha256": "168e3edf4474eda9808c45d511134a51c0e85bc59ee41b6b5ed19a1a330fc8b6",
+    "size": 398984
+  },
+  "build": {
+    "command": "npm run qlc:build",
+    "sourcesDigest": "35648c478f4d63cea463245c2d97bb3162dfe46374bf948f560272537a018c14",
+    "toolchain": {
+      "solanaCli": "solana-cli 4.1.2 (src:182084b8;",
+      "anchorCli": "anchor-cli 1.2.0",
+      "cargoBuildSbf": "cargo-build-sbf 4.1.0",
+      "platformTools": "v1.57",
+      "arch": "v3"
+    }
+  },
+  "anchorIdl": {
+    "sha256": "ed5ef2caafeb8fd3dcf64793e437220cbde8176e6888221cbd88c5cce626169e",
+    "size": 38759,
+    "spec": "0.1.0"
+  },
+  "conversion": {
+    "codama": "1.11.0",
+    "@codama/nodes-from-anchor": "1.5.6",
+    "@codama/renderers-js": "2.5.0"
+  },
+  "codamaIdl": {
+    "path": "solana/metadata/idl.json",
+    "sha256": "6e3580e863d62862f17c342657e8062eef9c763aaeeae2093de4f7ef8b1d1038",
+    "size": 77104,
+    "standardVersion": "1.9.2"
+  }
+}

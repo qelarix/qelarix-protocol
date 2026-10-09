@@ -1,0 +1,9 @@
+/* /image composer — scoped overrides only.
+   globals.css applies a violet !important focus ring to every textarea; the composer prompt
+   sits inside its own inset panel, so the ring reads as a harsh glowing rectangle there.
+   Class specificity (.x:focus > textarea:focus) lets this !important win, scoped to /image. */
+.promptInput:focus {
+  outline: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}

@@ -1,0 +1,82 @@
+/* Live perspective-line background (shared). Two tilted planes of horizontal light lines meet at a
+   glowing horizon; the lines flow toward the horizon and stars drift. Tones set the palette. */
+.grid {
+  position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+}
+.plane {
+  position: absolute; left: -60%; width: 220%; height: 60%;
+  background-size: 100% 70px;
+}
+.top {
+  top: -10%;
+  transform-origin: 50% 100%; transform: perspective(560px) rotateX(-66deg) rotateZ(-7deg);
+  -webkit-mask-image: linear-gradient(to top, transparent 0%, #000 55%);
+          mask-image: linear-gradient(to top, transparent 0%, #000 55%);
+  animation: flowDown 8s linear infinite;
+}
+.bottom {
+  bottom: -10%;
+  transform-origin: 50% 0%; transform: perspective(560px) rotateX(66deg) rotateZ(-7deg);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 55%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 55%);
+  animation: flowUp 8s linear infinite;
+}
+.horizon {
+  position: absolute; left: -10%; right: -10%; top: 50%; height: 160px;
+  transform: translateY(-50%) rotate(-3deg);
+  filter: blur(7px);
+  animation: pulse 7s ease-in-out infinite;
+}
+.stars {
+  position: absolute; inset: 0;
+  background-size: 170px 170px, 120px 120px;
+  background-position: 0 0, 60px 80px;
+  animation: twinkle 5s ease-in-out infinite, drift 70s linear infinite;
+}
+@keyframes flowUp   { from { background-position: 0 0; } to { background-position: 0 70px; } }
+@keyframes flowDown { from { background-position: 0 70px; } to { background-position: 0 0; } }
+@keyframes pulse { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; } }
+@keyframes twinkle { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.9; } }
+@keyframes drift { from { transform: translateX(0); } to { transform: translateX(-170px); } }
+@media (prefers-reduced-motion: reduce) {
+  .top, .bottom, .horizon, .stars { animation: none; }
+}
+
+/* Yellow: deep amber night with strong golden lines (Shorts Generator). */
+.yellow {
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(250,204,21,0.30), transparent 62%),
+    linear-gradient(180deg, #0F0B01 0%, #3A2B04 50%, #0F0B01 100%);
+}
+.yellow .plane { background-image: linear-gradient(rgba(253,224,71,0.42) 1.5px, transparent 1.5px); }
+.yellow .horizon { background: radial-gradient(ellipse 55% 50% at 50% 50%, rgba(255,250,220,0.75) 0%, rgba(253,224,71,0.45) 22%, rgba(245,158,11,0.16) 50%, transparent 72%); }
+.yellow .stars {
+  background-image:
+    radial-gradient(rgba(255,244,190,0.85) 1px, transparent 1.6px),
+    radial-gradient(rgba(250,204,21,0.6) 1px, transparent 1.6px);
+}
+
+/* Green: deep emerald night with bright green lines (Create Image). Tilted the other way and with a
+   tighter double-line rhythm so it reads as its own space, not a copy of the yellow grid. */
+.green {
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(34,197,94,0.30), transparent 62%),
+    linear-gradient(180deg, #020D06 0%, #07301A 50%, #020D06 100%);
+}
+.green .plane {
+  background-image:
+    linear-gradient(rgba(74,222,128,0.42) 1.5px, transparent 1.5px),
+    linear-gradient(rgba(134,239,172,0.16) 1px, transparent 1px);
+  background-size: 100% 56px, 100% 28px;
+}
+.green .top { transform: perspective(560px) rotateX(-66deg) rotateZ(6deg); }
+.green .bottom { transform: perspective(560px) rotateX(66deg) rotateZ(6deg); }
+.green .horizon {
+  transform: translateY(-50%) rotate(3deg);
+  background: radial-gradient(ellipse 55% 50% at 50% 50%, rgba(236,255,240,0.72) 0%, rgba(74,222,128,0.42) 22%, rgba(22,163,74,0.16) 50%, transparent 72%);
+}
+.green .stars {
+  background-image:
+    radial-gradient(rgba(220,252,231,0.85) 1px, transparent 1.6px),
+    radial-gradient(rgba(74,222,128,0.6) 1px, transparent 1.6px);
+}

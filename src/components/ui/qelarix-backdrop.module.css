@@ -1,0 +1,337 @@
+/* Qelarix live backdrop: the homepage background (qelarix-home.css .background-fx) as a reusable,
+   full-screen layer with slow light-thread motion. Colours and gradients match the homepage. */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 47% -12%, rgba(119, 88, 255, 0.28), transparent 48%),
+    radial-gradient(ellipse at 12% 44%, rgba(102, 72, 181, 0.24), transparent 42%),
+    radial-gradient(ellipse at 86% 26%, rgba(58, 204, 255, 0.13), transparent 38%),
+    linear-gradient(135deg, #030306 0%, #0b0614 38%, #10091b 66%, #040408 100%);
+}
+
+.backdrop::before,
+.backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.backdrop::before {
+  opacity: 0.16;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 68px 68px;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 74%);
+}
+
+.backdrop::after {
+  background:
+    linear-gradient(120deg, transparent 0 28%, rgba(143, 104, 255, 0.08) 42%, transparent 58%),
+    linear-gradient(20deg, transparent 0 46%, rgba(60, 231, 255, 0.06) 54%, transparent 70%);
+  filter: blur(22px);
+  opacity: 0.9;
+}
+
+.wash {
+  position: absolute;
+  width: 58vw;
+  height: 34vh;
+  border-radius: 999px;
+  filter: blur(90px);
+  opacity: 0.44;
+  animation: washDrift 26s ease-in-out infinite alternate;
+}
+
+.washA {
+  left: -12vw;
+  top: 30vh;
+  background: rgba(122, 88, 211, 0.45);
+}
+
+.washB {
+  right: -18vw;
+  bottom: 8vh;
+  background: rgba(76, 188, 255, 0.16);
+  animation-delay: -13s;
+}
+
+.thread {
+  position: absolute;
+  width: 1px;
+  height: 130vh;
+  top: -15vh;
+  background: linear-gradient(to bottom, transparent, rgba(139, 109, 255, 0.34), transparent);
+  filter: blur(1px);
+  animation: threadGlow 9s ease-in-out infinite;
+}
+
+.threadA { left: 31%; transform: rotate(13deg); }
+.threadB { right: 20%; transform: rotate(-10deg); animation-delay: -3s; }
+.threadC {
+  left: 12%;
+  transform: rotate(-7deg);
+  background: linear-gradient(to bottom, transparent, rgba(60, 231, 255, 0.22), transparent);
+  animation-delay: -6s;
+}
+.threadD { right: 41%; transform: rotate(6deg); opacity: 0.6; animation-delay: -1.5s; }
+
+.spark {
+  position: absolute;
+  left: 0;
+  width: 1px;
+  height: 22vh;
+  background: linear-gradient(to bottom, transparent, rgba(190, 175, 255, 0.85), transparent);
+  filter: blur(0.5px);
+  animation: sparkFall 7s linear infinite;
+}
+
+.threadA .spark { animation-delay: -1s; }
+.threadB .spark { animation-delay: -4.5s; }
+.threadC .spark { animation-duration: 9s; animation-delay: -2.5s; }
+
+@keyframes threadGlow {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+@keyframes sparkFall {
+  0% { transform: translateY(-25vh); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateY(130vh); opacity: 0; }
+}
+
+@keyframes washDrift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(6vw, -4vh, 0) scale(1.08); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wash, .thread, .spark { animation: none; }
+  .spark { display: none; }
+}
+
+/* Copper tone (Settings): warm graphite base with copper glow and copper light threads. */
+.copper {
+  background:
+    radial-gradient(ellipse at 50% -14%, rgba(214, 138, 86, 0.22), transparent 50%),
+    radial-gradient(ellipse at 10% 46%, rgba(160, 96, 60, 0.18), transparent 44%),
+    radial-gradient(ellipse at 88% 24%, rgba(232, 176, 120, 0.1), transparent 40%),
+    linear-gradient(135deg, #070605 0%, #13100d 38%, #1a1511 66%, #080706 100%);
+}
+
+.copper::after {
+  background:
+    linear-gradient(120deg, transparent 0 28%, rgba(214, 138, 86, 0.07) 42%, transparent 58%),
+    linear-gradient(20deg, transparent 0 46%, rgba(240, 190, 140, 0.05) 54%, transparent 70%);
+}
+
+.copper .washA { background: rgba(176, 104, 62, 0.4); }
+.copper .washB { background: rgba(232, 176, 120, 0.14); }
+.copper .thread { background: linear-gradient(to bottom, transparent, rgba(214, 142, 92, 0.34), transparent); }
+.copper .threadC { background: linear-gradient(to bottom, transparent, rgba(245, 200, 150, 0.22), transparent); }
+.copper .spark { background: linear-gradient(to bottom, transparent, rgba(255, 214, 170, 0.85), transparent); }
+
+/* Steel tone (Profile): cool metallic graphite with silver-blue glow and silver light threads. */
+.steel {
+  background:
+    radial-gradient(ellipse at 50% -14%, rgba(176, 192, 214, 0.2), transparent 50%),
+    radial-gradient(ellipse at 10% 46%, rgba(110, 124, 146, 0.18), transparent 44%),
+    radial-gradient(ellipse at 88% 24%, rgba(150, 196, 230, 0.1), transparent 40%),
+    linear-gradient(135deg, #060708 0%, #0f1215 38%, #161a1f 66%, #070809 100%);
+}
+
+.steel::after {
+  background:
+    linear-gradient(120deg, transparent 0 28%, rgba(190, 204, 222, 0.06) 42%, transparent 58%),
+    linear-gradient(20deg, transparent 0 46%, rgba(160, 205, 235, 0.05) 54%, transparent 70%);
+}
+
+.steel .washA { background: rgba(120, 134, 158, 0.36); }
+.steel .washB { background: rgba(160, 205, 235, 0.12); }
+.steel .thread { background: linear-gradient(to bottom, transparent, rgba(196, 208, 224, 0.32), transparent); }
+.steel .threadC { background: linear-gradient(to bottom, transparent, rgba(170, 214, 240, 0.22), transparent); }
+.steel .spark { background: linear-gradient(to bottom, transparent, rgba(236, 242, 250, 0.85), transparent); }
+
+/* Emerald: brighter deep-green base with mint light, used by Community. */
+.emerald {
+  background:
+    radial-gradient(ellipse at 50% -12%, rgba(52, 211, 153, 0.30), transparent 52%),
+    radial-gradient(ellipse at 8% 44%, rgba(16, 185, 129, 0.22), transparent 46%),
+    radial-gradient(ellipse at 90% 22%, rgba(110, 231, 183, 0.16), transparent 42%),
+    linear-gradient(135deg, #04110c 0%, #0a2219 38%, #0f2e22 66%, #05130d 100%);
+}
+
+.emerald::after {
+  background:
+    linear-gradient(120deg, transparent 0 28%, rgba(110, 231, 183, 0.08) 42%, transparent 58%),
+    linear-gradient(20deg, transparent 0 46%, rgba(52, 211, 153, 0.07) 54%, transparent 70%);
+}
+
+.emerald .washA { background: rgba(16, 185, 129, 0.42); }
+.emerald .washB { background: rgba(167, 243, 208, 0.16); }
+.emerald .thread { background: linear-gradient(to bottom, transparent, rgba(110, 231, 183, 0.38), transparent); }
+.emerald .threadC { background: linear-gradient(to bottom, transparent, rgba(167, 243, 208, 0.28), transparent); }
+.emerald .spark { background: linear-gradient(to bottom, transparent, rgba(220, 252, 236, 0.9), transparent); }
+
+/* Gold: deep amber base with bright gold light, used by the API page. */
+.gold {
+  background:
+    radial-gradient(ellipse at 50% -12%, rgba(250, 204, 21, 0.34), transparent 52%),
+    radial-gradient(ellipse at 8% 44%, rgba(245, 158, 11, 0.24), transparent 46%),
+    radial-gradient(ellipse at 90% 22%, rgba(253, 224, 71, 0.16), transparent 42%),
+    linear-gradient(135deg, #120d02 0%, #2a1d05 38%, #3a2808 66%, #140e03 100%);
+}
+
+.gold::after {
+  background:
+    linear-gradient(120deg, transparent 0 28%, rgba(253, 224, 71, 0.08) 42%, transparent 58%),
+    linear-gradient(20deg, transparent 0 46%, rgba(250, 204, 21, 0.07) 54%, transparent 70%);
+}
+
+.gold .washA { background: rgba(245, 158, 11, 0.44); }
+.gold .washB { background: rgba(253, 224, 71, 0.18); }
+.gold .thread { background: linear-gradient(to bottom, transparent, rgba(253, 224, 71, 0.4), transparent); }
+.gold .threadC { background: linear-gradient(to bottom, transparent, rgba(254, 240, 138, 0.3), transparent); }
+.gold .spark { background: linear-gradient(to bottom, transparent, rgba(255, 250, 220, 0.92), transparent); }
+
+/* Crimson: deep red base with warm red light, used by the MCP page. */
+.crimson {
+  background:
+    radial-gradient(ellipse at 50% -12%, rgba(239, 68, 68, 0.32), transparent 52%),
+    radial-gradient(ellipse at 8% 44%, rgba(220, 38, 38, 0.24), transparent 46%),
+    radial-gradient(ellipse at 90% 22%, rgba(251, 113, 133, 0.16), transparent 42%),
+    linear-gradient(135deg, #120304 0%, #2a0709 38%, #3a0b0f 66%, #140405 100%);
+}
+
+.crimson::after {
+  background:
+    linear-gradient(120deg, transparent 0 28%, rgba(252, 165, 165, 0.08) 42%, transparent 58%),
+    linear-gradient(20deg, transparent 0 46%, rgba(239, 68, 68, 0.07) 54%, transparent 70%);
+}
+
+.crimson .washA { background: rgba(220, 38, 38, 0.44); }
+.crimson .washB { background: rgba(252, 165, 165, 0.16); }
+.crimson .thread { background: linear-gradient(to bottom, transparent, rgba(252, 165, 165, 0.38), transparent); }
+.crimson .threadC { background: linear-gradient(to bottom, transparent, rgba(254, 202, 202, 0.28), transparent); }
+.crimson .spark { background: linear-gradient(to bottom, transparent, rgba(255, 228, 230, 0.9), transparent); }
+
+/* Teal: deep ocean base with bright cyan light (Storyboard). */
+.teal {
+  background:
+    radial-gradient(ellipse at 50% -12%, rgba(34, 211, 238, 0.30), transparent 52%),
+    radial-gradient(ellipse at 8% 44%, rgba(6, 182, 212, 0.22), transparent 46%),
+    radial-gradient(ellipse at 90% 22%, rgba(103, 232, 249, 0.16), transparent 42%),
+    linear-gradient(135deg, #021014 0%, #06252d 38%, #08323c 66%, #031317 100%);
+}
+.teal::after {
+  background:
+    linear-gradient(120deg, transparent 0 28%, rgba(103, 232, 249, 0.08) 42%, transparent 58%),
+    linear-gradient(20deg, transparent 0 46%, rgba(34, 211, 238, 0.07) 54%, transparent 70%);
+}
+.teal .washA { background: rgba(6, 182, 212, 0.42); }
+.teal .washB { background: rgba(165, 243, 252, 0.16); }
+.teal .thread { background: linear-gradient(to bottom, transparent, rgba(103, 232, 249, 0.38), transparent); }
+.teal .threadC { background: linear-gradient(to bottom, transparent, rgba(165, 243, 252, 0.28), transparent); }
+.teal .spark { background: linear-gradient(to bottom, transparent, rgba(224, 252, 255, 0.9), transparent); }
+
+/* Magenta: deep plum base with vivid pink light (Influencer). */
+.magenta {
+  background:
+    radial-gradient(ellipse at 50% -12%, rgba(236, 72, 153, 0.32), transparent 52%),
+    radial-gradient(ellipse at 8% 44%, rgba(219, 39, 119, 0.22), transparent 46%),
+    radial-gradient(ellipse at 90% 22%, rgba(244, 114, 182, 0.16), transparent 42%),
+    linear-gradient(135deg, #12030c 0%, #2c0820 38%, #3b0b2b 66%, #140410 100%);
+}
+.magenta::after {
+  background:
+    linear-gradient(120deg, transparent 0 28%, rgba(249, 168, 212, 0.08) 42%, transparent 58%),
+    linear-gradient(20deg, transparent 0 46%, rgba(236, 72, 153, 0.07) 54%, transparent 70%);
+}
+.magenta .washA { background: rgba(219, 39, 119, 0.42); }
+.magenta .washB { background: rgba(251, 207, 232, 0.16); }
+.magenta .thread { background: linear-gradient(to bottom, transparent, rgba(249, 168, 212, 0.38), transparent); }
+.magenta .threadC { background: linear-gradient(to bottom, transparent, rgba(251, 207, 232, 0.28), transparent); }
+.magenta .spark { background: linear-gradient(to bottom, transparent, rgba(253, 232, 243, 0.9), transparent); }
+
+/* Orange: deep ember base with bright orange light (Viral Mode). */
+.orange {
+  background:
+    radial-gradient(ellipse at 50% -12%, rgba(249, 115, 22, 0.32), transparent 52%),
+    radial-gradient(ellipse at 8% 44%, rgba(234, 88, 12, 0.22), transparent 46%),
+    radial-gradient(ellipse at 90% 22%, rgba(253, 186, 116, 0.16), transparent 42%),
+    linear-gradient(135deg, #120702 0%, #2c1405 38%, #3b1b07 66%, #140803 100%);
+}
+.orange::after {
+  background:
+    linear-gradient(120deg, transparent 0 28%, rgba(253, 186, 116, 0.08) 42%, transparent 58%),
+    linear-gradient(20deg, transparent 0 46%, rgba(249, 115, 22, 0.07) 54%, transparent 70%);
+}
+.orange .washA { background: rgba(234, 88, 12, 0.42); }
+.orange .washB { background: rgba(254, 215, 170, 0.16); }
+.orange .thread { background: linear-gradient(to bottom, transparent, rgba(253, 186, 116, 0.38), transparent); }
+.orange .threadC { background: linear-gradient(to bottom, transparent, rgba(254, 215, 170, 0.28), transparent); }
+.orange .spark { background: linear-gradient(to bottom, transparent, rgba(255, 237, 213, 0.9), transparent); }
+
+/* Sunset: warm studio light, bright amber key light with a rose fill (Relight). */
+.sunset {
+  background:
+    radial-gradient(ellipse at 72% -10%, rgba(251, 191, 36, 0.38), transparent 50%),
+    radial-gradient(ellipse at 6% 52%, rgba(244, 114, 182, 0.24), transparent 46%),
+    radial-gradient(ellipse at 92% 70%, rgba(251, 146, 60, 0.2), transparent 44%),
+    linear-gradient(135deg, #120804 0%, #2a1306 36%, #2b0f1c 68%, #0f0508 100%);
+}
+.sunset::after {
+  background:
+    linear-gradient(120deg, transparent 0 28%, rgba(253, 224, 71, 0.1) 42%, transparent 58%),
+    linear-gradient(20deg, transparent 0 46%, rgba(244, 114, 182, 0.08) 54%, transparent 70%);
+}
+.sunset .washA { background: rgba(251, 191, 36, 0.46); }
+.sunset .washB { background: rgba(244, 114, 182, 0.22); }
+.sunset .thread { background: linear-gradient(to bottom, transparent, rgba(253, 224, 71, 0.42), transparent); }
+.sunset .threadC { background: linear-gradient(to bottom, transparent, rgba(251, 207, 232, 0.32), transparent); }
+.sunset .spark { background: linear-gradient(to bottom, transparent, rgba(255, 247, 220, 0.95), transparent); }
+
+/* Mint: graphite base with white light and a bright green key light (Video Upscale). */
+.mint {
+  background:
+    radial-gradient(ellipse at 70% -10%, rgba(74, 222, 128, 0.3), transparent 50%),
+    radial-gradient(ellipse at 8% 50%, rgba(226, 232, 240, 0.1), transparent 46%),
+    radial-gradient(ellipse at 92% 72%, rgba(134, 239, 172, 0.16), transparent 44%),
+    linear-gradient(135deg, #050607 0%, #0e1211 38%, #121715 66%, #050606 100%);
+}
+.mint::after {
+  background:
+    linear-gradient(120deg, transparent 0 28%, rgba(255, 255, 255, 0.07) 42%, transparent 58%),
+    linear-gradient(20deg, transparent 0 46%, rgba(74, 222, 128, 0.08) 54%, transparent 70%);
+}
+.mint .washA { background: rgba(74, 222, 128, 0.36); }
+.mint .washB { background: rgba(241, 245, 249, 0.14); }
+.mint .thread { background: linear-gradient(to bottom, transparent, rgba(187, 247, 208, 0.4), transparent); }
+.mint .threadC { background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.3), transparent); }
+.mint .spark { background: linear-gradient(to bottom, transparent, rgba(240, 253, 244, 0.95), transparent); }
+
+/* Citrus: graphite base with white light and a bright yellow key light (Video Extend). */
+.citrus {
+  background:
+    radial-gradient(ellipse at 30% -10%, rgba(250, 204, 21, 0.3), transparent 50%),
+    radial-gradient(ellipse at 92% 48%, rgba(226, 232, 240, 0.1), transparent 46%),
+    radial-gradient(ellipse at 8% 74%, rgba(253, 224, 71, 0.15), transparent 44%),
+    linear-gradient(135deg, #060605 0%, #12110c 38%, #16150f 66%, #060605 100%);
+}
+.citrus::after {
+  background:
+    linear-gradient(120deg, transparent 0 28%, rgba(255, 255, 255, 0.07) 42%, transparent 58%),
+    linear-gradient(20deg, transparent 0 46%, rgba(250, 204, 21, 0.08) 54%, transparent 70%);
+}
+.citrus .washA { background: rgba(250, 204, 21, 0.36); }
+.citrus .washB { background: rgba(241, 245, 249, 0.14); }
+.citrus .thread { background: linear-gradient(to bottom, transparent, rgba(254, 240, 138, 0.4), transparent); }
+.citrus .threadC { background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.3), transparent); }
+.citrus .spark { background: linear-gradient(to bottom, transparent, rgba(254, 252, 232, 0.95), transparent); }

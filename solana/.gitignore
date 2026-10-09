@@ -1,0 +1,6 @@
+# Build output, deploy keypairs and test fixtures never enter git.
+/target
+/test-ledger
+/tests/fixtures/*.so
+*-keypair.json
+.anchor

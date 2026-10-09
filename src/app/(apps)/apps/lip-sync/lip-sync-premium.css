@@ -1,0 +1,2007 @@
+/* =====================================================================
+   Lip Sync Studio premium shell — PORTED 1:1 from the UI Lab creat_video
+   (tokens + shell + controls + preview + modes). Global base resets are
+   intentionally NOT ported (they'd restyle the whole app). All rules are
+   .qx-* / .ls-* scoped to this page. Generate gloss is overridden to the
+   locked Qelarix purple at the bottom. Source: qelarix-video-ui-lab.
+   ===================================================================== */
+
+/* =====================================================================
+   QELARIX DESIGN TOKENS — premium cinematic dark
+   ---------------------------------------------------------------------
+   Single source of truth for color, depth, radius, motion and type.
+   Everything downstream references these vars so the package ports
+   cleanly into the main repo (drop these vars into the theme layer).
+   ===================================================================== */
+:root {
+  /* ---- Base surfaces (black → graphite, no pure-flat fills) ---- */
+  --qx-bg-0: #060609; /* deepest backdrop */
+  --qx-bg-1: #0a0a10; /* app canvas */
+  --qx-bg-2: #0f0f17; /* primary panel */
+  --qx-bg-3: #14141e; /* raised surface / input rest */
+  --qx-bg-4: #1a1a26; /* hover / elevated */
+
+  /* ---- Hairlines & dividers (light-on-dark, kept whisper-thin) ---- */
+  --qx-line: rgba(255, 255, 255, 0.06);
+  --qx-line-soft: rgba(255, 255, 255, 0.04);
+  --qx-line-strong: rgba(255, 255, 255, 0.11);
+
+  /* ---- Text ---- */
+  --qx-text-1: #f3f4fb; /* primary */
+  --qx-text-2: #aab0c6; /* secondary */
+  --qx-text-3: #767c93; /* muted / placeholder */
+  --qx-text-4: #4f5468; /* faint / disabled */
+
+  /* ---- Brand accents (purple primary, cyan secondary — restrained) ---- */
+  --qx-purple-100: #c4b5fd;
+  --qx-purple-200: #a78bfa;
+  --qx-purple-300: #8b5cf6;
+  --qx-purple-400: #7c3aed;
+  --qx-purple-500: #6d28d9;
+  --qx-cyan-200: #67e8f9;
+  --qx-cyan-300: #22d3ee;
+  --qx-cyan-400: #06b6d4;
+
+  /* lime — scoped to model/quality dropdown badges & highlights only
+     (matches the reference picker; not used for CTAs or app accents) */
+  --qx-lime: #c8f24a;
+  --qx-lime-ink: #0d1206; /* dark text on lime fills */
+  --qx-lime-soft: rgba(200, 242, 74, 0.14);
+
+  /* glow values are alpha-tinted so they read as light, not fills */
+  --qx-glow-purple: rgba(124, 58, 237, 0.5);
+  --qx-glow-purple-soft: rgba(124, 58, 237, 0.22);
+  --qx-glow-cyan: rgba(34, 211, 238, 0.28);
+  --qx-glow-cyan-soft: rgba(34, 211, 238, 0.12);
+
+  /* ---- Status (semantic — success is NEVER the generate button) ---- */
+  --qx-success: #34d399;
+  --qx-success-soft: rgba(52, 211, 153, 0.14);
+  --qx-danger: #fb7185;
+  --qx-danger-soft: rgba(251, 113, 133, 0.13);
+  --qx-warning: #fbbf24;
+  --qx-warning-soft: rgba(251, 191, 36, 0.13);
+
+  /* ---- Radii ---- */
+  --qx-r-xs: 7px;
+  --qx-r-sm: 10px;
+  --qx-r-md: 13px;
+  --qx-r-lg: 17px;
+  --qx-r-xl: 22px;
+  --qx-r-2xl: 28px;
+  --qx-r-pill: 999px;
+
+  /* ---- Elevation / depth (layered, restrained) ---- */
+  --qx-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --qx-shadow-md: 0 12px 30px -14px rgba(0, 0, 0, 0.75);
+  --qx-shadow-lg: 0 30px 70px -28px rgba(0, 0, 0, 0.85);
+  --qx-shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.03) inset,
+    0 24px 60px -34px rgba(0, 0, 0, 0.9);
+
+  /* ---- Glossy purple generate fill (the signature CTA) ---- */
+  --qx-gloss-purple: linear-gradient(
+    180deg,
+    #b59cff 0%,
+    #8b5cf6 42%,
+    #7427e0 100%
+  );
+  --qx-gloss-purple-hover: linear-gradient(
+    180deg,
+    #c2adff 0%,
+    #9568f8 42%,
+    #7e34ea 100%
+  );
+
+  /* ---- Active / quiet state fills (fill-not-border language) ----
+     Active controls read through a soft purple fill + glow, never a ring;
+     inactive controls sit on a quiet graphite surface or stay transparent. */
+  --qx-active: linear-gradient(
+    180deg,
+    rgba(150, 108, 250, 0.4),
+    rgba(124, 58, 237, 0.24)
+  );
+  --qx-active-soft: rgba(124, 58, 237, 0.14);
+  --qx-quiet: rgba(255, 255, 255, 0.035); /* inactive control surface */
+  --qx-quiet-hover: rgba(255, 255, 255, 0.06);
+
+  /* ---- Surface gradients (graphite/violet steps between the bg tokens,
+     named so the whole palette re-themes from this one file) ---- */
+  --qx-grad-seg-active: linear-gradient(180deg, var(--qx-bg-4), #20202e);
+  --qx-grad-thumb: linear-gradient(140deg, #241f3d, #16131f);
+  --qx-grad-menu: linear-gradient(180deg, #14141f, #0e0e16);
+  --qx-grad-hero: linear-gradient(135deg, #16121f 0%, #0e0d15 60%);
+  --qx-grad-avatar: linear-gradient(140deg, #2a2740, #1a1830);
+  --qx-grad-skeleton: linear-gradient(135deg, #131320, #0c0c14);
+
+  /* ---- Type ---- */
+  --qx-font: "Inter", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --qx-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+
+  /* ---- Motion ---- */
+  --qx-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --qx-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --qx-dur-fast: 120ms;
+  --qx-dur: 200ms;
+  --qx-dur-slow: 360ms;
+
+  /* ---- Layout rhythm ---- */
+  --qx-gap: 14px;
+  --qx-pad-panel: 18px;
+  --qx-topbar-h: 60px;
+  --qx-rail-w: 324px; /* control rail width on desktop */
+  --qx-maxw: 1640px;
+}
+/* =====================================================================
+   SHELL — no global top bar (the main app header will live above this
+   surface later). Left = operate column that SIZES TO ITS CONTENT (Generate
+   sits right under the Quality picker; the column ends just below it and
+   grows/shrinks as needed). Right = open work surface (no panel/window).
+   ===================================================================== */
+.qx-app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  /* Original UI Lab cinematic backdrop — values restored verbatim from creat_video/src/styles/base.css
+     (.qx-app::before): deep base + two restrained, low-alpha brand auras. Applied as a fixed-attachment
+     background on .qx-app so it paints over the host #050507 and behind all content (no z-index needed). */
+  background:
+    radial-gradient(1100px 620px at 12% -8%, var(--qx-glow-purple-soft), transparent 60%),
+    radial-gradient(900px 560px at 100% 4%, var(--qx-glow-cyan-soft), transparent 58%),
+    radial-gradient(1200px 800px at 50% 120%, rgba(124, 58, 237, 0.08), transparent 60%),
+    var(--qx-bg-0);
+  background-attachment: fixed;
+}
+
+/* Energy Field — the generated PNG overlay (NOT a CSS effect). The PNG has a transparent background; only
+   the blue/purple/cyan wave carries alpha (verified: ~83% of the image is fully transparent). It is a
+   separate fixed layer above the .qx-app backdrop and below content (.qx-workspace is z-index:1).
+   No gradients, no repeating lines, no blobs, no mask. screen-blend lets the wave glow over the dark base
+   while the transparent areas leave the base completely unchanged — so there is no page wash and the base
+   background colours are untouched. pointer-events:none, does not affect layout. */
+.qx-app::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("/apps/backgrounds/qelarix-energy-field.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  opacity: 0.32;            /* the single subtlety dial — raise/lower if the wave should be stronger/fainter */
+  mix-blend-mode: screen;   /* transparent PNG bg → screen only glows the wave; base is never brightened */
+}
+
+.qx-workspace {
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  max-width: var(--qx-maxw);
+  margin: 0 auto;
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: var(--qx-rail-w) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start; /* rail sizes to its content, not the viewport */
+}
+
+/* ---------- Left operate column (content height) ---------- */
+.qx-rail {
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.qx-rail__body {
+  display: flex;
+  flex-direction: column;
+}
+.qx-rail__dock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ---------- Mode tabs (plain text + active underline) ---------- */
+.qx-modetabs {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-shrink: 0;
+}
+.qx-modetab {
+  position: relative;
+  padding: 4px 0 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--qx-text-3);
+  transition: color var(--qx-dur) var(--qx-ease);
+  white-space: nowrap;
+}
+.qx-modetab:hover {
+  color: var(--qx-text-2);
+}
+.qx-modetab[data-active="true"] {
+  color: var(--qx-text-1);
+}
+.qx-modetab[data-active="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--qx-purple-300), var(--qx-cyan-300));
+  box-shadow: 0 0 12px -2px var(--qx-glow-purple);
+}
+
+/* ---------- Right output area fills the column height ---------- */
+/* the right work surface is open (transparent) and fills the viewport */
+.qx-stage {
+  align-self: stretch;
+  min-height: calc(100vh - 36px);
+  min-height: calc(100dvh - 36px);
+}
+
+/* ---------- Panel = transparent group (no card box) ---------- */
+.qx-panel {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+.qx-panel--pad {
+  padding: 0;
+}
+.qx-section {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.qx-section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 1024px) {
+  /* stack: controls flow above the output; page scrolls as needed */
+  .qx-workspace {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .qx-stage {
+    align-self: start;
+    min-height: 420px;
+  }
+}
+@media (max-width: 560px) {
+  .qx-workspace {
+    padding: 14px;
+    gap: 16px;
+  }
+  .qx-modetabs {
+    gap: 16px;
+  }
+  .qx-modetab {
+    font-size: 14px;
+  }
+}
+/* =====================================================================
+   CONTROLS — fill-not-border language.
+   Almost nothing is wrapped in a visible outline. Active states read
+   through fill / glow / tone / text emphasis. Inactive controls sit on a
+   quiet graphite surface or stay transparent. The ONLY strongly framed
+   control is the Generate CTA at the bottom of the rail.
+   ===================================================================== */
+
+/* ---------- Field wrapper ---------- */
+.qx-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.qx-field__label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.qx-field__label > span:first-child {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--qx-text-3);
+}
+.qx-field__hint {
+  font-size: 11px;
+  color: var(--qx-text-4);
+  font-weight: 500;
+}
+
+/* single-sourced micro sublabel */
+.qx-sublabel {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--qx-text-3);
+}
+
+/* ---------- Settings grid ---------- */
+.qx-settings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.qx-settings__full {
+  grid-column: 1 / -1;
+}
+
+/* ---------- Segmented control (no track box, no item borders) ---------- */
+.qx-seg {
+  display: flex;
+  gap: 4px;
+}
+.qx-seg__item {
+  flex: 1;
+  min-width: 0;
+  height: 34px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: var(--qx-r-sm);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--qx-text-3);
+  background: transparent;
+  white-space: nowrap;
+  transition: color var(--qx-dur) var(--qx-ease),
+    background var(--qx-dur) var(--qx-ease);
+}
+.qx-seg__item:hover {
+  color: var(--qx-text-1);
+  background: var(--qx-quiet);
+}
+.qx-seg__item[data-active="true"] {
+  color: #fff;
+  background: var(--qx-active);
+  box-shadow: 0 0 20px -8px var(--qx-glow-purple);
+}
+.qx-seg__item[data-active="true"] .qx-seg__dot {
+  background: var(--qx-purple-200);
+  box-shadow: 0 0 8px var(--qx-glow-purple);
+}
+.qx-seg__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--qx-r-pill);
+  background: var(--qx-text-4);
+}
+
+/* ---------- Toggle (fill only) ---------- */
+.qx-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.qx-toggle__track {
+  width: 38px;
+  height: 22px;
+  border-radius: var(--qx-r-pill);
+  background: var(--qx-quiet-hover);
+  position: relative;
+  transition: background var(--qx-dur) var(--qx-ease);
+  flex-shrink: 0;
+}
+.qx-toggle__knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--qx-r-pill);
+  background: var(--qx-text-2);
+  transition: transform var(--qx-dur) var(--qx-ease),
+    background var(--qx-dur) var(--qx-ease);
+}
+.qx-toggle[data-on="true"] .qx-toggle__track {
+  background: linear-gradient(180deg, var(--qx-purple-300), var(--qx-purple-400));
+  box-shadow: 0 0 16px -3px var(--qx-glow-purple);
+}
+.qx-toggle[data-on="true"] .qx-toggle__knob {
+  transform: translateX(16px);
+  background: #fff;
+}
+.qx-toggle__label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--qx-text-2);
+}
+
+/* ---------- Slider ---------- */
+.qx-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.qx-slider__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.qx-slider__val {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--qx-text-1);
+  font-variant-numeric: tabular-nums;
+}
+.qx-slider input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: var(--qx-r-pill);
+  background: var(--qx-quiet-hover);
+  outline: none;
+}
+.qx-slider input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: var(--qx-r-pill);
+  background: linear-gradient(
+    90deg,
+    var(--qx-purple-300) var(--_pct, 50%),
+    var(--qx-quiet-hover) var(--_pct, 50%)
+  );
+}
+.qx-slider input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: var(--qx-r-pill);
+  background: var(--qx-quiet-hover);
+}
+.qx-slider input[type="range"]::-moz-range-progress {
+  height: 6px;
+  border-radius: var(--qx-r-pill);
+  background: var(--qx-purple-300);
+}
+.qx-slider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -5px;
+  border-radius: var(--qx-r-pill);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.25), 0 2px 6px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+.qx-slider input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: var(--qx-r-pill);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.25);
+  cursor: pointer;
+}
+
+/* ---------- Select / dropdown (filled, no resting border) ---------- */
+.qx-select {
+  position: relative;
+}
+.qx-select__btn {
+  width: 100%;
+  height: 46px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border-radius: var(--qx-r-md);
+  background: var(--qx-quiet);
+  transition: background var(--qx-dur) var(--qx-ease),
+    box-shadow var(--qx-dur) var(--qx-ease);
+  text-align: left;
+}
+.qx-select__btn:hover {
+  background: var(--qx-quiet-hover);
+}
+.qx-select__btn[data-open="true"] {
+  background: var(--qx-quiet-hover);
+  box-shadow: 0 0 0 2px var(--qx-glow-purple-soft);
+}
+.qx-select__thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: var(--qx-grad-thumb);
+  color: var(--qx-purple-100);
+  flex-shrink: 0;
+}
+.qx-select__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+.qx-select__name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--qx-text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.qx-select__meta {
+  font-size: 11px;
+  color: var(--qx-text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.qx-select__chev {
+  color: var(--qx-text-3);
+  transition: transform var(--qx-dur) var(--qx-ease);
+  flex-shrink: 0;
+}
+.qx-select__btn[data-open="true"] .qx-select__chev {
+  transform: rotate(180deg);
+}
+
+/* floating menu keeps a faint hairline + shadow — needed to separate an
+   overlay from the content beneath it (readability). */
+.qx-select__menu {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  padding: 6px;
+  border-radius: var(--qx-r-md);
+  background: var(--qx-grad-menu);
+  border: 1px solid var(--qx-line);
+  box-shadow: var(--qx-shadow-lg);
+  max-height: 320px;
+  overflow-y: auto;
+  animation: qx-pop var(--qx-dur) var(--qx-ease-out);
+}
+@keyframes qx-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.99);
+  }
+}
+.qx-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 10px;
+  border-radius: var(--qx-r-sm);
+  text-align: left;
+  transition: background var(--qx-dur-fast) var(--qx-ease);
+}
+.qx-option:hover {
+  background: var(--qx-quiet-hover);
+}
+.qx-option[data-active="true"] {
+  background: var(--qx-lime-soft);
+}
+.qx-option__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--qx-text-1);
+}
+.qx-option__meta {
+  font-size: 11px;
+  color: var(--qx-text-3);
+}
+.qx-option__check {
+  margin-left: auto;
+  color: var(--qx-lime);
+}
+.qx-option__badge {
+  margin-left: auto;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--qx-lime);
+}
+
+/* ---------- Rich model menu (reference picker look) ---------- */
+.qx-menu--rich {
+  padding: 8px;
+}
+.qx-menu__group {
+  padding: 8px 8px 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--qx-lime);
+}
+.qx-menu__group:not(:first-child) {
+  margin-top: 4px;
+}
+.qx-mopt {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 10px;
+  border-radius: var(--qx-r-sm);
+  text-align: left;
+  transition: background var(--qx-dur-fast) var(--qx-ease);
+}
+.qx-mopt:hover {
+  background: var(--qx-quiet-hover);
+}
+.qx-mopt[data-active="true"] {
+  background: var(--qx-lime-soft);
+}
+.qx-mopt__icon {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+.qx-mopt__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+.qx-mopt__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--qx-text-1);
+}
+.qx-mopt__specs {
+  font-size: 11.5px;
+  color: var(--qx-text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.qx-mopt__check {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--qx-lime);
+}
+.qx-badge {
+  flex-shrink: 0;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--qx-lime-ink);
+  background: var(--qx-lime);
+  padding: 2px 7px;
+  border-radius: var(--qx-r-pill);
+}
+
+/* ---------- Upload / media (filled surfaces, no dashed boxes) ---------- */
+.qx-uploads {
+  display: grid;
+  gap: 11px;
+}
+.qx-upload {
+  position: relative;
+  border-radius: var(--qx-r-md);
+  background: var(--qx-quiet);
+  min-height: 112px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: background var(--qx-dur) var(--qx-ease);
+}
+.qx-upload:hover {
+  background: var(--qx-quiet-hover);
+}
+.qx-upload__optional {
+  position: absolute;
+  top: 9px;
+  right: 11px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--qx-text-4);
+}
+.qx-upload__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: var(--qx-quiet-hover);
+  color: var(--qx-purple-100);
+}
+.qx-upload__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--qx-text-1);
+}
+.qx-upload__sub {
+  font-size: 11.5px;
+  color: var(--qx-text-3);
+  max-width: 240px;
+}
+.qx-upload__actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* filled media tile (image/video added) */
+.qx-media {
+  position: relative;
+  border-radius: var(--qx-r-md);
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  background: var(--qx-bg-3);
+}
+.qx-media__poster {
+  position: absolute;
+  inset: 0;
+}
+.qx-media__bar {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 11px;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.78));
+}
+.qx-media__name {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+.qx-media__remove {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--qx-r-pill);
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  transition: background var(--qx-dur) var(--qx-ease),
+    color var(--qx-dur) var(--qx-ease);
+}
+.qx-media__remove:hover {
+  background: var(--qx-danger-soft);
+  color: var(--qx-danger);
+}
+
+/* twin frame tiles (start / end) */
+.qx-frames {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.qx-frame {
+  border-radius: var(--qx-r-sm);
+  background: var(--qx-quiet);
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: var(--qx-text-3);
+  transition: background var(--qx-dur) var(--qx-ease),
+    color var(--qx-dur) var(--qx-ease);
+}
+.qx-frame:hover {
+  background: var(--qx-quiet-hover);
+  color: var(--qx-text-2);
+}
+.qx-frame__label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ---------- Prompt field (filled, glow on focus, no border) ---------- */
+.qx-prompt {
+  position: relative;
+  border-radius: var(--qx-r-md);
+  background: var(--qx-quiet);
+  transition: background var(--qx-dur) var(--qx-ease),
+    box-shadow var(--qx-dur) var(--qx-ease);
+}
+.qx-prompt:focus-within {
+  background: var(--qx-quiet-hover);
+  box-shadow: 0 0 0 2px var(--qx-glow-purple-soft);
+}
+.qx-prompt textarea {
+  width: 100%;
+  min-height: 80px;
+  resize: vertical;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 13px 14px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--qx-text-1);
+}
+.qx-prompt textarea::placeholder {
+  color: var(--qx-text-4);
+}
+.qx-prompt__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 11px 10px;
+}
+.qx-prompt__chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.qx-prompt__count {
+  font-size: 11px;
+  color: var(--qx-text-4);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.qx-prompt__count[data-warn="true"] {
+  color: var(--qx-warning);
+}
+
+/* ---------- Chips (no borders; active = soft purple fill) ---------- */
+.qx-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: var(--qx-r-pill);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--qx-text-3);
+  background: var(--qx-quiet);
+  transition: color var(--qx-dur) var(--qx-ease),
+    background var(--qx-dur) var(--qx-ease);
+}
+.qx-chip:hover {
+  color: var(--qx-text-1);
+  background: var(--qx-quiet-hover);
+}
+.qx-chip--accent,
+.qx-chip[data-on="true"] {
+  color: var(--qx-purple-100);
+  background: var(--qx-active-soft);
+}
+.qx-chip[data-on="true"] {
+  box-shadow: 0 0 16px -7px var(--qx-glow-purple);
+}
+
+/* ---------- Utility buttons (no borders; quiet fill / text) ---------- */
+.qx-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 15px;
+  border-radius: var(--qx-r-md);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--qx-text-2);
+  background: var(--qx-quiet);
+  transition: color var(--qx-dur) var(--qx-ease),
+    background var(--qx-dur) var(--qx-ease);
+}
+.qx-btn:hover {
+  color: var(--qx-text-1);
+  background: var(--qx-quiet-hover);
+}
+.qx-btn--sm {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 12.5px;
+}
+.qx-btn--ghost {
+  background: transparent;
+  color: var(--qx-text-3);
+}
+.qx-btn--ghost:hover {
+  background: var(--qx-quiet);
+  color: var(--qx-text-1);
+}
+/* quietly emphasized action (e.g. Download / Retry) — tone, not a frame */
+.qx-btn--accent {
+  color: var(--qx-purple-100);
+  background: var(--qx-active-soft);
+}
+.qx-btn--accent:hover {
+  color: #fff;
+  background: var(--qx-active);
+}
+.qx-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- Generate CTA — the ONE strongly framed control ---------- */
+.qx-generate {
+  position: relative;
+  width: 100%;
+  height: 52px;
+  border-radius: var(--qx-r-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #fff;
+  background: var(--qx-gloss-purple);
+  box-shadow: 0 0 0 1px rgba(178, 156, 255, 0.5) inset,
+    0 1px 0 rgba(255, 255, 255, 0.4) inset,
+    0 12px 30px -10px var(--qx-glow-purple),
+    0 0 40px -16px var(--qx-glow-purple);
+  overflow: hidden;
+  transition: transform var(--qx-dur-fast) var(--qx-ease),
+    box-shadow var(--qx-dur) var(--qx-ease),
+    background var(--qx-dur) var(--qx-ease);
+}
+.qx-generate::before {
+  content: "";
+  position: absolute;
+  inset: 1px 1px 50% 1px;
+  border-radius: calc(var(--qx-r-md) - 1px);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.32),
+    rgba(255, 255, 255, 0)
+  );
+  pointer-events: none;
+}
+.qx-generate:hover {
+  background: var(--qx-gloss-purple-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(194, 173, 255, 0.6) inset,
+    0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 16px 38px -10px var(--qx-glow-purple),
+    0 0 56px -14px var(--qx-glow-purple);
+}
+.qx-generate:active {
+  transform: translateY(0);
+}
+.qx-generate:disabled {
+  filter: grayscale(0.4) brightness(0.7);
+  cursor: not-allowed;
+  transform: none;
+}
+.qx-generate__cost {
+  position: absolute;
+  right: 14px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.82);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.qx-generate__spin {
+  animation: qx-spin 0.9s linear infinite;
+}
+@keyframes qx-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Helper / info line (no card, just quiet text) ---------- */
+.qx-helper {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 2px 2px;
+}
+.qx-helper__icon {
+  color: var(--qx-text-4);
+  flex-shrink: 0;
+}
+.qx-helper__text {
+  font-size: 12px;
+  color: var(--qx-text-3);
+  line-height: 1.45;
+}
+.qx-helper__text a {
+  color: var(--qx-purple-100);
+  font-weight: 600;
+}
+.qx-helper__text a:hover {
+  color: #fff;
+}
+
+/* ---------- Mode hero card (cinematic backdrop + accent title) ---------- */
+.qx-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--qx-r-lg);
+  min-height: 116px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 14px 16px;
+  background: var(--qx-grad-hero);
+  flex-shrink: 0;
+}
+.qx-hero__media {
+  position: absolute;
+  inset: 0;
+  opacity: 0.9;
+}
+.qx-hero__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.4;
+  mix-blend-mode: soft-light;
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.5) 0.5px,
+    transparent 0.5px
+  );
+  background-size: 4px 4px;
+  pointer-events: none;
+}
+.qx-hero__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(6, 6, 10, 0.12) 0%,
+    rgba(6, 6, 10, 0.55) 55%,
+    rgba(6, 6, 10, 0.92) 100%
+  );
+}
+.qx-hero__howto {
+  position: absolute;
+  top: 11px;
+  right: 11px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 11px;
+  border-radius: var(--qx-r-pill);
+  background: rgba(10, 10, 16, 0.55);
+  backdrop-filter: blur(8px);
+  color: var(--qx-text-1);
+  font-size: 12px;
+  font-weight: 600;
+  transition: background var(--qx-dur) var(--qx-ease);
+}
+.qx-hero__howto:hover {
+  background: rgba(22, 22, 32, 0.72);
+}
+.qx-hero__howto svg {
+  color: var(--qx-cyan-200);
+}
+.qx-hero__title {
+  position: relative;
+  z-index: 1;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--qx-purple-100);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+.qx-hero__sub {
+  position: relative;
+  z-index: 1;
+  margin-top: 3px;
+  font-size: 12.5px;
+  color: var(--qx-text-2);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- Compact row picker (Model / Quality, near Generate) ---------- */
+.qx-tail {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.qx-tail__detail {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.qx-autorow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 2px;
+}
+.qx-autorow__label {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--qx-text-1);
+}
+.qx-scene {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.qx-scene__hint {
+  font-size: 11px;
+  color: var(--qx-text-4);
+  line-height: 1.4;
+}
+.qx-row {
+  position: relative;
+}
+.qx-row__btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--qx-r-md);
+  background: var(--qx-quiet);
+  text-align: left;
+  transition: background var(--qx-dur) var(--qx-ease);
+}
+.qx-row__btn:hover,
+.qx-row__btn[data-open="true"] {
+  background: var(--qx-quiet-hover);
+}
+.qx-row__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.qx-row__label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--qx-text-3);
+}
+.qx-row__val {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--qx-text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.qx-row__chev {
+  color: var(--qx-text-3);
+  flex-shrink: 0;
+}
+.qx-row__btn:hover .qx-row__chev,
+.qx-row__btn[data-open="true"] .qx-row__chev {
+  color: var(--qx-text-2);
+}
+
+/* ---------- Side flyout (model / quality panel beside the sidebar) ---------- */
+.qx-flyout__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+}
+.qx-flyout {
+  z-index: 61;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--qx-r-lg);
+  /* dark navy, almost black */
+  background: linear-gradient(180deg, #0b0e18, #07090f);
+  box-shadow: var(--qx-shadow-lg);
+  overflow: hidden;
+  animation: qx-flyin var(--qx-dur) var(--qx-ease-out);
+}
+@keyframes qx-flyin {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+}
+.qx-flyout__search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--qx-line-soft);
+  color: var(--qx-text-3);
+  flex-shrink: 0;
+}
+.qx-flyout__search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--qx-text-1);
+}
+.qx-flyout__search input::placeholder {
+  color: var(--qx-text-4);
+}
+.qx-flyout__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px;
+}
+.qx-flyout__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--qx-lime);
+}
+.qx-flyout__head svg {
+  color: var(--qx-lime);
+}
+.qx-flyout__empty {
+  padding: 20px 10px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--qx-text-4);
+}
+/* =====================================================================
+   PREVIEW / RESULT SHELL — right side
+   States: empty · loading · success(+download/action) · error
+   ===================================================================== */
+/* Open work surface — no panel/window. Generated videos appear here on the
+   bare app background; nothing frames the area. */
+.qx-preview {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- header strip ---- */
+.qx-preview__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--qx-line-soft);
+}
+.qx-preview__title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--qx-text-1);
+}
+.qx-preview__title .qx-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--qx-r-pill);
+  background: var(--qx-text-4);
+}
+.qx-preview__title[data-state="loading"] .qx-dot {
+  background: var(--qx-purple-200);
+  box-shadow: 0 0 10px var(--qx-glow-purple);
+  animation: qx-pulse 1.2s var(--qx-ease) infinite;
+}
+.qx-preview__title[data-state="success"] .qx-dot {
+  background: var(--qx-cyan-300);
+  box-shadow: 0 0 10px var(--qx-glow-cyan);
+}
+.qx-preview__title[data-state="error"] .qx-dot {
+  background: var(--qx-danger);
+}
+@keyframes qx-pulse {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* ---- canvas (where states render) ---- */
+.qx-canvas {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  min-height: 360px;
+}
+.qx-canvas__inner {
+  width: 100%;
+  max-width: 880px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+/* video frame (poster mock — gradient, no real asset) */
+.qx-vframe {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--qx-r-lg);
+  overflow: hidden;
+  background: var(--qx-bg-0);
+  box-shadow: var(--qx-shadow-lg);
+}
+.qx-vframe__poster {
+  position: absolute;
+  inset: 0;
+}
+.qx-vframe__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  mix-blend-mode: soft-light;
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.5) 0.5px,
+    transparent 0.5px
+  );
+  background-size: 4px 4px;
+  pointer-events: none;
+}
+.qx-vframe__play {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 66px;
+  height: 66px;
+  border-radius: var(--qx-r-pill);
+  display: grid;
+  place-items: center;
+  background: rgba(10, 10, 16, 0.5);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #fff;
+  transition: transform var(--qx-dur) var(--qx-ease),
+    background var(--qx-dur) var(--qx-ease);
+}
+.qx-vframe__play:hover {
+  transform: scale(1.06);
+  background: rgba(124, 58, 237, 0.4);
+}
+.qx-vframe__badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: var(--qx-r-pill);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+}
+.qx-vframe__scrub {
+  position: absolute;
+  inset: auto 12px 12px 12px;
+  height: 4px;
+  border-radius: var(--qx-r-pill);
+  background: rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+}
+.qx-vframe__scrub i {
+  display: block;
+  height: 100%;
+  width: 34%;
+  border-radius: var(--qx-r-pill);
+  background: linear-gradient(90deg, var(--qx-purple-200), var(--qx-cyan-300));
+}
+
+/* ---- EMPTY state ---- */
+.qx-empty {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 40px 20px;
+}
+.qx-empty__orb {
+  width: 84px;
+  height: 84px;
+  border-radius: var(--qx-r-pill);
+  display: grid;
+  place-items: center;
+  color: var(--qx-purple-100);
+  background: radial-gradient(
+      circle at 50% 30%,
+      var(--qx-glow-purple-soft),
+      transparent 70%
+    ),
+    var(--qx-quiet);
+}
+.qx-empty__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--qx-text-1);
+}
+.qx-empty__sub {
+  font-size: 13px;
+  color: var(--qx-text-3);
+  max-width: 360px;
+  line-height: 1.5;
+}
+.qx-empty__hints {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* ---- LOADING state ---- */
+.qx-loading {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+.qx-skel {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--qx-r-lg);
+  overflow: hidden;
+  background: var(--qx-grad-skeleton);
+}
+.qx-skel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(139, 92, 246, 0.12),
+    transparent
+  );
+  animation: qx-shimmer 1.6s var(--qx-ease) infinite;
+}
+@keyframes qx-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+.qx-skel__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.qx-ring {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--qx-r-pill);
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--qx-purple-200);
+  animation: qx-spin 0.9s linear infinite;
+  box-shadow: 0 0 24px -6px var(--qx-glow-purple);
+}
+.qx-loading__status {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--qx-text-1);
+}
+.qx-loading__sub {
+  font-size: 11.5px;
+  color: var(--qx-text-3);
+  font-variant-numeric: tabular-nums;
+}
+.qx-progress {
+  width: 100%;
+  max-width: 420px;
+  height: 6px;
+  border-radius: var(--qx-r-pill);
+  background: var(--qx-bg-4);
+  overflow: hidden;
+}
+.qx-progress i {
+  display: block;
+  height: 100%;
+  border-radius: var(--qx-r-pill);
+  background: linear-gradient(90deg, var(--qx-purple-300), var(--qx-cyan-300));
+  box-shadow: 0 0 14px -2px var(--qx-glow-purple);
+  transition: width 0.4s var(--qx-ease);
+}
+.qx-loading__steps {
+  display: flex;
+  gap: 18px;
+  margin-top: 2px;
+}
+.qx-lstep {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  color: var(--qx-text-4);
+}
+.qx-lstep[data-on="true"] {
+  color: var(--qx-text-2);
+}
+.qx-lstep[data-on="true"] .qx-lstep__dot {
+  background: var(--qx-purple-200);
+  box-shadow: 0 0 8px var(--qx-glow-purple);
+}
+.qx-lstep__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--qx-r-pill);
+  background: var(--qx-bg-4);
+}
+
+/* ---- SUCCESS + action / download row ---- */
+.qx-result {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.qx-result__bar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.qx-result__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.qx-result__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.qx-result__actions .qx-generate {
+  height: 44px;
+  width: auto;
+  padding: 0 22px 0 18px;
+  font-size: 13.5px;
+}
+.qx-result__actions .qx-generate__cost {
+  position: static;
+}
+
+/* ---- ERROR state ---- */
+.qx-error {
+  width: 100%;
+  max-width: 460px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 13px;
+  padding: 36px 24px;
+  border-radius: var(--qx-r-lg);
+  background: radial-gradient(
+      120% 100% at 50% 0%,
+      var(--qx-danger-soft),
+      transparent 65%
+    );
+}
+.qx-error__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--qx-r-pill);
+  display: grid;
+  place-items: center;
+  color: var(--qx-danger);
+  background: var(--qx-danger-soft);
+}
+.qx-error__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--qx-text-1);
+}
+.qx-error__sub {
+  font-size: 12.5px;
+  color: var(--qx-text-3);
+  line-height: 1.5;
+}
+.qx-error__code {
+  font-family: var(--qx-mono);
+  font-size: 11px;
+  color: var(--qx-text-4);
+}
+
+/* ---- toast (download/action feedback) ---- */
+.qx-toast {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 15px;
+  border-radius: var(--qx-r-pill);
+  background: rgba(13, 13, 20, 0.92);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--qx-line-strong);
+  box-shadow: var(--qx-shadow-md);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--qx-text-1);
+  animation: qx-toast-in var(--qx-dur-slow) var(--qx-ease-out);
+  z-index: 5;
+}
+.qx-toast svg {
+  color: var(--qx-cyan-300);
+}
+@keyframes qx-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+}
+
+/* ---- history strip ---- */
+.qx-history {
+  padding: 13px 16px;
+}
+.qx-history__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.qx-history__title {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--qx-text-3);
+}
+.qx-history__row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.qx-thumb {
+  position: relative;
+  flex-shrink: 0;
+  width: 118px;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--qx-r-sm);
+  overflow: hidden;
+  background: var(--qx-bg-3);
+  opacity: 0.78;
+  transition: opacity var(--qx-dur) var(--qx-ease),
+    transform var(--qx-dur) var(--qx-ease),
+    box-shadow var(--qx-dur) var(--qx-ease);
+}
+.qx-thumb:hover {
+  transform: translateY(-2px);
+  opacity: 1;
+}
+.qx-thumb[data-active="true"] {
+  opacity: 1;
+  box-shadow: 0 0 0 1.5px rgba(167, 139, 250, 0.7),
+    0 0 18px -6px var(--qx-glow-purple);
+}
+.qx-thumb__poster {
+  position: absolute;
+  inset: 0;
+}
+.qx-thumb__dur {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #fff;
+  padding: 1px 5px;
+  border-radius: var(--qx-r-pill);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* ---- generic meta badge (no border; quiet, text-led) ---- */
+.qx-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--qx-text-3);
+}
+.qx-meta svg {
+  color: var(--qx-text-4);
+}
+.qx-meta--success {
+  color: var(--qx-cyan-200);
+  padding: 0 10px;
+  border-radius: var(--qx-r-pill);
+  background: var(--qx-glow-cyan-soft);
+}
+.qx-meta--success svg {
+  color: var(--qx-cyan-200);
+}
+
+@media (max-width: 1024px) {
+  .qx-canvas {
+    min-height: 320px;
+  }
+}
+@media (max-width: 560px) {
+  /* let the preview header wrap instead of clipping */
+  .qx-preview__head {
+    flex-wrap: wrap;
+  }
+}
+/* =====================================================================
+   MODES — shared rail rhythm + small per-mode helpers.
+   The three modes (Create / Edit / Motion) share the same layout language;
+   differences are content, not structure.
+   ===================================================================== */
+.qx-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.qx-divider {
+  height: 1px;
+  background: var(--qx-line-soft);
+  margin: 2px 0;
+}
+
+/* two-up reference inputs (motion control) */
+.qx-twocol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px;
+}
+@media (max-width: 540px) {
+  .qx-twocol {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* inline label + value rows */
+.qx-kv {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+}
+.qx-kv__k {
+  color: var(--qx-text-3);
+}
+.qx-kv__v {
+  color: var(--qx-text-1);
+  font-weight: 600;
+}
+
+/* =====================================================================
+   QELARIX MAIN-REPO INTEGRATION OVERRIDES (scoped to .qx-app)
+   ===================================================================== */
+
+/* Lock the Generate CTA gradient to the Qelarix/Cinema purple standard
+   (#A38CFF -> #7C5CF0 -> #5E3FD6), overriding the Lab's --qx-gloss-purple. */
+.qx-app {
+  --qx-gloss-purple: linear-gradient(180deg, #A38CFF 0%, #7C5CF0 46%, #5E3FD6 100%);
+  --qx-gloss-purple-hover: linear-gradient(180deg, #B49DFF 0%, #8B6CF5 46%, #6B4CE0 100%);
+  position: relative;
+}
+
+/* The CTA never greys out — the app uses aria-disabled (not native :disabled). */
+.qx-generate[aria-disabled="true"] { cursor: wait; }
+
+/* Sit below the global app header: no forced full-viewport workspace, tall stage. */
+.qx-workspace { min-height: auto; padding: 16px 20px 48px; position: relative; z-index: 1; }
+.qx-stage { min-height: calc(100vh - 150px); }
+@media (max-width: 1024px) { .qx-stage { min-height: 380px; } }
+
+/* Energy Field = the generated PNG overlay on .qx-app::after (defined with .qx-app, above); the base
+   background is the restored UI Lab backdrop on .qx-app. No CSS-generated overlay/gradient effect here. */
+
+/* Audio (Upload | Audio text) toggle — no harsh focus/click frame. The active segment
+   still reads through its subtle purple fill + glow (the [data-active] rule); we only drop
+   the outline so clicking it never shows an ugly border. */
+.qx-seg__item:focus,
+.qx-seg__item:focus-visible { outline: none; }
+
+/* Real preview/result video fills the 16:9 frame. */
+.ls-vid { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #000; }
+.ls-vid--contain { object-fit: contain; }
+
+/* Compact Example in the left rail — shown under Generate only once history exists (State B).
+   Reuses .ls-vid + .qx-vframe__badge; full rail width, fixed compact height, no heavy border. */
+.ls-rail-example {
+  position: relative;
+  width: 100%;
+  height: 130px;
+  border-radius: var(--qx-r-lg);
+  overflow: hidden;
+  background: var(--qx-bg-0);
+  box-shadow: var(--qx-shadow-lg);
+}
+.ls-rail-example .qx-vframe__badge {
+  top: 8px;
+  left: 8px;
+  height: 22px;
+  padding: 0 8px;
+  font-size: 10px;
+}
+
+/* Back link above the rail. */
+.ls-back { font-size: 12px; color: var(--qx-text-3); transition: color var(--qx-dur) var(--qx-ease); }
+.ls-back:hover { color: var(--qx-text-1); }
+
+/* Hidden native file input. */
+.ls-hidden { display: none; }
+
+/* "generate it" link inside the face upload box — premium purple->cyan, not a button; clicking it
+   navigates (Create Image / Create Video) and stops propagation so it never opens the file picker. */
+.ls-genlink {
+  color: var(--qx-purple-200);
+  font-weight: 600;
+  cursor: pointer;
+  transition: color var(--qx-dur) var(--qx-ease);
+}
+.ls-genlink:hover { color: var(--qx-cyan-300); text-decoration: underline; }
+.ls-genlink:focus-visible { outline: none; color: var(--qx-cyan-300); text-decoration: underline; }
+
+/* Picker model-row technical chips (short, neutral — never repeat the group label). */
+.ls-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+.ls-chip {
+  font-size: 9.5px; font-weight: 600; letter-spacing: 0.02em;
+  color: var(--qx-text-3); background: var(--qx-quiet);
+  padding: 2px 7px; border-radius: var(--qx-r-pill); white-space: nowrap;
+}
+
+/* Plan-locked model row — visible but clearly restricted (UX only; backend gating is source of truth). */
+.qx-mopt[data-locked="true"] { opacity: 0.6; }
+.qx-mopt[data-locked="true"]:hover { opacity: 0.78; }
+.ls-lock { margin-left: auto; flex-shrink: 0; color: var(--qx-text-4); }
+
+/* ── History: output-area label (top line) + finished-generations strip + item preview ── */
+.ls-stage-head { display: flex; align-items: center; padding: 4px 6px 10px; flex-shrink: 0; }
+.ls-history-label { font-size: 15px; font-weight: 600; color: var(--qx-text-3); user-select: none; }
+
+/* Persistent history grid — newest top-left, 4 per row, larger cinematic cards (~340x388). */
+.ls-history {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px;
+  padding: 0 6px 16px; max-height: 64vh; overflow-y: auto; flex-shrink: 0;
+}
+.ls-hist {
+  position: relative; aspect-ratio: 340 / 388; border-radius: var(--qx-r-md); overflow: hidden;
+  background: var(--qx-bg-3); cursor: pointer; opacity: 0.92;
+  /* Static subtle glow border — no movement (no transform lift, no animation). */
+  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.18);
+  transition: opacity var(--qx-dur) var(--qx-ease), box-shadow var(--qx-dur) var(--qx-ease);
+}
+/* Hover only brightens the static glow — it does NOT move the card. */
+.ls-hist:hover { opacity: 1; box-shadow: 0 0 0 1.5px rgba(167, 139, 250, 0.45), 0 16px 36px -14px rgba(0, 0, 0, 0.8); }
+.ls-hist video, .ls-hist img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ls-hist__cap {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 20px 12px 10px;
+  background: linear-gradient(180deg, transparent, rgba(6, 6, 10, 0.85)); pointer-events: none;
+}
+.ls-hist__name { font-size: 12px; font-weight: 600; color: #fff; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6); }
+.ls-hist__play {
+  position: absolute; right: 9px; top: 9px; width: 26px; height: 26px;
+  border-radius: var(--qx-r-pill); background: rgba(10, 10, 16, 0.5); backdrop-filter: blur(6px);
+  color: #fff; display: grid; place-items: center;
+}
+
+/* Inline delete confirmation — small graphite popover anchored above the Delete button (NOT a modal). */
+.ls-del { position: relative; display: inline-flex; }
+.ls-del__btn:hover { color: #f9a8a8; } /* subtle danger tint on hover only */
+.ls-confirm {
+  position: absolute; bottom: calc(100% + 8px); right: 0; z-index: 5; width: 196px; padding: 12px 13px;
+  background: #0a0a0f; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--qx-r-md);
+  box-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.85); text-align: left;
+}
+.ls-confirm__title { font-size: 12.5px; font-weight: 600; color: var(--qx-text-1); }
+.ls-confirm__sub { margin-top: 3px; font-size: 11px; color: var(--qx-text-3); }
+.ls-confirm__err { margin-top: 7px; font-size: 11px; color: #f87171; }
+.ls-confirm__row { display: flex; justify-content: flex-end; gap: 4px; margin-top: 11px; }
+.ls-confirm__cancel, .ls-confirm__del {
+  font-size: 12px; font-weight: 600; padding: 5px 11px; border-radius: 8px;
+  transition: background var(--qx-dur) var(--qx-ease), color var(--qx-dur) var(--qx-ease);
+}
+.ls-confirm__cancel { color: var(--qx-text-3); }
+.ls-confirm__cancel:hover { color: var(--qx-text-1); background: var(--qx-quiet-hover); }
+.ls-confirm__del { color: #f87171; }
+.ls-confirm__del:hover { background: rgba(248, 113, 113, 0.15); color: #fca5a5; }
+.ls-confirm__cancel:disabled, .ls-confirm__del:disabled { opacity: 0.55; cursor: wait; }
+@media (max-width: 1280px) { .ls-history { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 768px) { .ls-history { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Clean Cinema-style enlarged player — no native browser frame; custom play/progress/time. */
+.ls-player { position: relative; width: 100%; background: #000; }
+.ls-player__vid { display: block; width: 100%; max-height: 58vh; object-fit: contain; cursor: pointer; background: #000; }
+.ls-player__bar {
+  position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; background: linear-gradient(180deg, transparent, rgba(6, 6, 10, 0.8));
+}
+.ls-player__btn {
+  width: 30px; height: 30px; flex-shrink: 0; border-radius: var(--qx-r-pill);
+  background: rgba(255, 255, 255, 0.14); color: #fff; display: grid; place-items: center;
+  transition: background var(--qx-dur) var(--qx-ease);
+}
+.ls-player__btn:hover { background: rgba(255, 255, 255, 0.24); }
+.ls-player__track { flex: 1; height: 4px; border-radius: var(--qx-r-pill); background: rgba(255, 255, 255, 0.2); cursor: pointer; overflow: hidden; }
+.ls-player__track i { display: block; height: 100%; border-radius: var(--qx-r-pill); background: linear-gradient(90deg, var(--qx-purple-200), var(--qx-cyan-300)); }
+.ls-player__time { font-size: 11.5px; font-weight: 600; color: rgba(255, 255, 255, 0.85); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+
+/* History item enlarged preview — compact (not huge). */
+.ls-hbackdrop {
+  position: fixed; inset: 0; z-index: 70; padding: 24px;
+  background: rgba(4, 5, 8, 0.72); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+}
+.ls-hmodal {
+  width: 100%; max-width: 640px; border-radius: var(--qx-r-lg); overflow: hidden;
+  background: var(--qx-bg-2); border: none; box-shadow: var(--qx-shadow-lg);
+}
+.ls-hmodal__img { width: 100%; max-height: 56vh; background: #000; display: block; object-fit: contain; }
+.ls-hmodal__bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; flex-wrap: wrap; }
+.ls-hmodal__title { font-size: 12px; color: var(--qx-text-3); }
+.ls-hmodal__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.ls-hmodal__actions .qx-btn { height: 34px; }
+
+/* Result video failed to load in the browser (valid URL, but the <video> errored). */
+.ls-vid-fallback {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  text-align: center; padding: 24px; background: #0c0d12;
+  color: var(--qx-text-2); font-size: 13px; line-height: 1.5;
+}

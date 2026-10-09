@@ -1,0 +1,12 @@
+---
+# Dedicated Solana CLI configuration for Qelarix devnet work. Pass it explicitly on every command:
+#   solana -C solana/devnet-cli.yml <command> ... --url devnet
+# The default keypair path is deliberately impossible (/dev/null is not a directory), so any command
+# that omits an explicit signer fails instead of falling back to a default key. Never point
+# keypair_path at a real key. Contains no secrets.
+json_rpc_url: "https://api.devnet.solana.com"
+websocket_url: ""
+keypair_path: "/dev/null/qelarix-default-keypair-disabled.json"
+address_labels:
+  "11111111111111111111111111111111": System Program
+commitment: confirmed

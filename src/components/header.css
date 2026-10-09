@@ -1,0 +1,13 @@
+/* Scoped global-header / nav visual styles — clean reference navbar look.
+   Prefixed .qxh-* only; no global resets, no html/body/:root, no Tailwind imports, no .qhp-* classes.
+   Affects only elements that opt in via the .qxh-* class names (header nav links). */
+
+.qxh-nav-link {
+  font-weight: 760;
+  transition: color 150ms ease;
+}
+
+/* Hover turns the link white (overrides the inline base/active color). No underline — plain like the reference. */
+.qxh-nav-link:hover {
+  color: #ffffff !important;
+}

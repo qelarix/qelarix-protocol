@@ -1,0 +1,13 @@
+{
+  "name": "Qelarix Credit",
+  "symbol": "QLC",
+  "description": "QLC is the internal utility credit token of the Qelarix ecosystem. It is used for AI image, video, audio, Cinema Studio and future Qelarix platform services. QLC is designed for use inside the Qelarix ecosystem and is not intended as an investment asset.",
+  "image": "https://qelarix.vercel.app/qlc.png",
+  "external_url": "https://qelarix.vercel.app",
+  "seller_fee_basis_points": 0,
+  "properties": {
+    "category": "utility",
+    "decimals": 2,
+    "network": "Solana"
+  }
+}
